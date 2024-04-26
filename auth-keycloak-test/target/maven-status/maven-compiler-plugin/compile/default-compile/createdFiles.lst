@@ -1,0 +1,4 @@
+com\rifl\AuthApplication.class
+com\rifl\config\JwtAuthConverter.class
+com\rifl\config\SecurityConfig.class
+com\rifl\controller\AuthController.class
