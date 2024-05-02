@@ -2,6 +2,7 @@ package com.rifl.app.user.entities;
 
 
 import com.rifl.app.role.Role;
+import com.rifl.app.service.Service;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.*;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -43,13 +45,17 @@ public class User implements UserDetails, Principal{
     private String password;
     @Column(unique = true)
     private String identifier;
-    private int idService;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "service_id", nullable = false)
+    public Service service;
+
     private String cin;
     private String firstPhoneNumber;
     private String lastPhoneNumber;
-    private LocalDateTime contractStartDate;
-    private LocalDateTime contractEndDate;
-    private LocalDateTime dateOfBirth;
+    private LocalDate contractStartDate;
+    private LocalDate contractEndDate;
+    private LocalDate dateOfBirth;
     private int status;
     private boolean accountLocked;
     private boolean enabled;
@@ -59,8 +65,14 @@ public class User implements UserDetails, Principal{
     @LastModifiedDate
     @Column(insertable = false)
     private LocalDateTime lastModifiedDate;
-    @ManyToMany(fetch = EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
     private List<Role> roles;
+
 
     @Override
     public String getName() {
@@ -107,4 +119,5 @@ public class User implements UserDetails, Principal{
     public String getFullName() {
         return firstName + " " + lastName;
     }
+
 }

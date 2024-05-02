@@ -1,5 +1,7 @@
 package com.rifl.app.auth;
 
+import com.rifl.app.role.Role;
+import com.rifl.app.service.ServiceRepository;
 import com.rifl.app.user.entities.Token;
 import com.rifl.app.email.EmailService;
 import com.rifl.app.email.EmailTemplateName;
@@ -16,12 +18,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,14 +39,20 @@ public class AuthenticationService {
     private final RoleRepository roleRepository;
     private final EmailService emailService;
     private final TokenRepository tokenRepository;
+    private final ServiceRepository serviceRepository;
 
     @Value("${application.mailing.frontend.activation-url}")
     private String activationUrl;
 
     public void register(RegistrationRequest request) throws MessagingException {
-        var userRole = roleRepository.findByName("USER")
-                // todo - better exception handling
-                .orElseThrow(() -> new IllegalStateException("ROLE USER was not initiated"));
+        var roles = new ArrayList<Role>();
+        for (String roleName : request.getRoles()) {
+            var role = roleRepository.findByName(roleName)
+                    .orElseThrow(() -> new IllegalStateException("Role " + roleName + " not found"));
+            roles.add(role);
+        }
+     String serviceName = request.getService();
+     com.rifl.app.service.Service service = (com.rifl.app.service.Service) serviceRepository.findByName(serviceName);
         var user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
@@ -50,11 +61,20 @@ public class AuthenticationService {
                 .identifier(request.getIdentifier())
                 .accountLocked(false)
                 .enabled(false)
-                .roles(List.of(userRole))
+                .dateOfBirth(request.getDateOfBirth())
+                .matricule(request.getMatricule())
+                .contractStartDate(request.getContractStartDate())
+                .contractEndDate(request.getContractEndDate())
+                .roles(roles)
+                .cin(request.getCin())
+                .firstPhoneNumber(request.getFirstPhoneNumber())
+                .lastPhoneNumber(request.getLastPhoneNumber())
+                .service(service)
                 .build();
         userRepository.save(user);
         sendValidationEmail(user);
     }
+
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         var auth = authenticationManager.authenticate(

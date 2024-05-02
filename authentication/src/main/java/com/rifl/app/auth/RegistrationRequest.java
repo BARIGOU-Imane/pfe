@@ -3,6 +3,8 @@ package com.rifl.app.auth;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.rifl.app.role.Role;
+import com.rifl.app.role.UserRole;
+import com.rifl.app.service.Service;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -15,6 +17,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -42,13 +45,13 @@ public class RegistrationRequest {
     @NotNull(message = "identifier is mandatory")
     private String identifier;
     private String matricule;
-    private int idService;
+    private String service;
     private String cin;
     private String firstPhoneNumber;
     private String lastPhoneNumber;
-    private LocalDateTime contractStartDate;
-    private LocalDateTime contractEndDate;
-    private LocalDateTime dateOfBirth;
+    private LocalDate contractStartDate;
+    private LocalDate contractEndDate;
+    private LocalDate dateOfBirth;
     private int status;
     private boolean accountLocked;
     private boolean enabled;
@@ -58,7 +61,7 @@ public class RegistrationRequest {
     @LastModifiedDate
     @Column(insertable = false)
     private LocalDateTime lastModifiedDate;
-    private List<Role> roles;
+    private List<String> roles;
 
     @JsonCreator
     public RegistrationRequest(@JsonProperty("firstName") String firstName,
@@ -67,35 +70,36 @@ public class RegistrationRequest {
                                @JsonProperty("password")String password,
                                @JsonProperty("matricule")String matricule,
                                @JsonProperty("identifier")String identifier,
-                               @JsonProperty("idService")int idService,
+                               @JsonProperty("service") String service,
                                @JsonProperty("cin")String cin,
                                @JsonProperty("firstPhoneNumber")String firstPhoneNumber,
                                @JsonProperty("lastPhoneNumber")String lastPhoneNumber,
-                               @JsonProperty("contractStartDate")LocalDateTime contractStartDate,
-                               @JsonProperty("contractEndDate")LocalDateTime contractEndDate,
-                               @JsonProperty("dateOfBirth")LocalDateTime dateOfBirth,
+                               @JsonProperty("contractStartDate")LocalDate contractStartDate,
+                               @JsonProperty("contractEndDate")LocalDate contractEndDate,
+                               @JsonProperty("dateOfBirth")LocalDate dateOfBirth,
                                @JsonProperty("status")int status,
                                @JsonProperty("accountLocked")boolean accountLocked,
                                @JsonProperty("enabled")boolean enabled,
                                @JsonProperty("createdDate")LocalDateTime createdDate,
                                @JsonProperty("lastModifiedDate")LocalDateTime lastModifiedDate,
-                               @JsonProperty("roles")List<Role> roles) {
+                               @JsonProperty("roles") List<String> roles
+) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.matricule = matricule;
         this.identifier = identifier;
-        this.idService = idService;
+        this.service = service;
         this.cin = cin;
         this.firstPhoneNumber = firstPhoneNumber;
         this.lastPhoneNumber = lastPhoneNumber;
         this.contractStartDate = contractStartDate;
         this.contractEndDate = contractEndDate;
         this.dateOfBirth = dateOfBirth;
-        this.status = status;
-        this.accountLocked = accountLocked;
-        this.enabled = enabled;
+        this.status = status;//
+        this.accountLocked = accountLocked;//
+        this.enabled = enabled;//
         this.createdDate = createdDate;
         this.lastModifiedDate = lastModifiedDate;
         this.roles = roles;
