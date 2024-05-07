@@ -1,6 +1,7 @@
 package com.rifl.app.user.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rifl.app.role.Role;
 import com.rifl.app.service.Service;
 import lombok.*;
@@ -46,6 +47,7 @@ public class User implements UserDetails, Principal{
     @Column(unique = true)
     private String identifier;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "service_id", nullable = false)
     public Service service;
@@ -65,6 +67,7 @@ public class User implements UserDetails, Principal{
     @LastModifiedDate
     @Column(insertable = false)
     private LocalDateTime lastModifiedDate;
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",

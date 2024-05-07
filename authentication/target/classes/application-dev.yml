@@ -6,7 +6,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -43,3 +43,9 @@ application:
       photos-output-path: ./uploads
 server:
   port: 8088
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
